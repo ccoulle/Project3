@@ -69,18 +69,23 @@ class View(object):
       button.pack(side=tk.RIGHT)
       
       button = tk.Button(self.root, text="Search", width=20) 
-      button.config(command=self.controller.walk)
+      button.config(command=self.Please)
       button.pack(side=tk.RIGHT)
 
       self.entry = tk.Entry(self.root)
-      self.entry.bind('<Return>', lambda event: self.displayEntryInfo())   
+      self.entry.bind('<Return>', lambda event: self.sendToSearch())   
       self.entry.config(font = labelFont)
       self.entry.pack(fill = tk.BOTH, side=tk.BOTTOM)
       self.entry.focus()
   
-   def displayEntryInfo(self):
-      print self.entry.get()  
-   
+   def sendToSearch(self):      
+      cutIt=self.entry.get()
+      return cutIt
+      
+   def Please(self):
+      yep = self.sendToSearch()
+      self.controller.walk(yep)    
+      
    def notify(self, m):
       self.moneyVar.set(m)
 

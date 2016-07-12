@@ -31,7 +31,7 @@ class Controller(object):
     self.dir = dir
     self.dirStack = stack.Stack()
     self.dirStack.push(self.dir)
-    self.file_pat = self.view.displayEntryInfo()
+    self.file_pat = file_pat
     self.want_files = []
     self.files = []
     self.dirs = []
@@ -55,7 +55,7 @@ class Controller(object):
          self.model.os.remove(self.want_files[n])
          x = int(raw_input("Do you want to keep going? O for yes, 1 for No. "))
 
-  def walk(self):
+  def walk(self, pat):
     if not self.dirStack.empty():
          preDir = os.getcwd()
          return "This is top dir", self.dirStack.top()
@@ -71,7 +71,8 @@ class Controller(object):
              print self.dirStack.top()
              self.walk()
            else:
-             if fnmatch.fnmatch(x, file_pat):
+             pat = file_pat
+             if fnmatch.fnmatch(x, pat):
                print "A PYC:", x
                file_path = os.getcwd()
                file_path +='/'
@@ -82,21 +83,20 @@ class Controller(object):
          self.dirStack.pop()
          
   def populateFiles(self):
-     return os.listdir( os.getcwd() )
+     files = os.listdir( os.getcwd() )
+     return files
          
          
 if __name__ == "__main__":
 
-  file_pat = lambda event: self.displayEntryInfo()
+  file_pat = lambda event: self.sendToSearch()
   
   dir = os.getcwd()
   print "DIR IS:", dir
-  t = Controller(dir, file_pat )
-  t.walk()
   
-  print t.dirs
+  '''print t.dirs
   print t.files
-  print t.want_files
+  print t.want_files'''
   
-  #controller = Controller(dir, file_pat)
+  controller = Controller(dir, file_pat)
   tk.mainloop() 
