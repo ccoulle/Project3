@@ -1,12 +1,58 @@
 import sys
-import Tkinter as tk
+import xml.sax
+SPACES=2
 
-class Model(object):
-  def __init__(self):
-    self.money = 0
-  def addMoney(self, m):
-    self.money += m
-  def removeMoney(self, m):
-    self.money -= m
-  def getMoney(self):
-    return self.money
+class Model(xml.sax.ContentHandler):
+   """Custom xml.sax.ContentHandler"""
+   
+   def __init__(self):
+      xml.sax.ContentHandler.__init__(self)
+      self.rootTag = True
+      self.spaces = SPACES
+      self.line = ''
+      self.docList = []
+      
+   def clearDocument(self):
+      self.docList = []
+      
+   def getDocumentList(self):
+      return self.docList
+   
+   def startElement(self, name, attributes):
+      self.CurrentData = name
+  
+      
+   def endElement(self, name):
+      self.spaces -= SPACES
+         
+   def characters(self, content):
+      content = content.strip()
+      if content: 
+         self.line += content
+         self.line += '\n'
+         self.docList.append(self.line)
+         self.line = ''
+            
+   def loadFile(self, filename):
+      try:
+         parser = xml.sax.make_parser()
+         parser.setContentHandler(self)
+         parser.parse(filename)
+         docList = self.docList
+         self.docList = []
+         for x in docList:
+            self.docList.append(x.rstrip())
+      except IOError, message:
+         print "Error reading File: ", message
+      except xml.sax.SaxParseException, message:
+         print "Error parsing file:", message
+            
+if __name__ == "__main__":
+   if len(sys.argv) != 2:
+      print "usage:", sys.argv[0], "<xml file>"
+      sys.exi()
+   model = Model()
+   model.loadFile(sys.argv[1])
+   docList = model.getDocumentList()
+   for x in docList:
+      print x
